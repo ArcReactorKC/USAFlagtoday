@@ -71,6 +71,60 @@ def test_wrong_location(field, value):
         parse_status(data, "MO")
 
 
+@pytest.mark.parametrize("half", [False, True])
+@pytest.mark.parametrize("null_state", [False, True])
+def test_location_confirmed_by_calendar(half, null_state):
+    """Reproduce the user's live MO response shape, without inventing order data."""
+    data = payload(half)
+    del data["status"]["stateCode"]
+    if null_state:
+        data["status"]["stateCode"] = None
+    data["calendar"] = {"countryCode": "US", "stateCode": "MO", "events": []}
+    result = parse_status(data, "MO")
+    assert result.state_code == "MO"
+    assert result.is_half_staff is half
+    assert result.status == ("half_staff" if half else "full_staff")
+
+
+@pytest.mark.parametrize(
+    "calendar",
+    [
+        None,
+        [],
+        {},
+        {"events": []},
+        {"countryCode": "US"},
+        {"stateCode": "MO"},
+        {"countryCode": "US", "stateCode": "KS"},
+        {"countryCode": "CA", "stateCode": "MO"},
+    ],
+)
+def test_missing_status_location_requires_confirmed_calendar(calendar):
+    data = payload(True)
+    del data["status"]["stateCode"]
+    data["calendar"] = calendar
+    with pytest.raises(MastLocationError):
+        parse_status(data, "MO")
+
+
+@pytest.mark.parametrize(
+    "section,field,value",
+    [
+        ("status", "stateCode", "KS"),
+        ("status", "stateCode", ""),
+        ("status", "countryCode", "CA"),
+        ("calendar", "countryCode", "CA"),
+        ("calendar", "stateCode", "KS"),
+    ],
+)
+def test_conflicting_location_not_overridden(section, field, value):
+    data = payload(True)
+    data["calendar"] = {"countryCode": "US", "stateCode": "MO"}
+    data[section][field] = value
+    with pytest.raises(MastLocationError):
+        parse_status(data, "MO")
+
+
 def session_for(status=200):
     response = MagicMock(status=status)
     response.json = AsyncMock(return_value=payload())

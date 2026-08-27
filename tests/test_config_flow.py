@@ -13,7 +13,7 @@ from custom_components.mast_flag.api import (
     MastResponseError,
     parse_status,
 )
-from tests.test_api import payload
+from tests.test_api import payload, session_for
 
 CLIENT = "custom_components.mast_flag.api.MastClient.async_get_status"
 INPUT = {"api_key": "test-key", "country_code": "US", "state_code": "MO"}
@@ -31,6 +31,28 @@ async def test_user_success(hass):
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"] == INPUT
     assert result["result"].unique_id == "US_MO"
+
+
+async def test_user_success_with_live_calendar_location(hass):
+    """Exercise the actual client/parser in setup with the reported response shape."""
+    session, response = session_for()
+    data = payload(True)
+    del data["status"]["stateCode"]
+    data["calendar"] = {"countryCode": "US", "stateCode": "MO", "events": []}
+    response.json.return_value = data
+    with (
+        patch(
+            "custom_components.mast_flag.config_flow.async_get_clientsession", return_value=session
+        ),
+        patch("custom_components.mast_flag.async_setup_entry", return_value=True),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            "mast_flag", context={"source": SOURCE_USER}, data=INPUT
+        )
+        await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["result"].unique_id == "US_MO"
+    session.get.assert_called_once()
 
 
 @pytest.mark.parametrize(

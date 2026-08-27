@@ -1,8 +1,8 @@
 """Async client for the documented Mast v1 current-status response.
 
 Schema reference: https://www.mast.today/api (verified 2026-08-27).
-Only documented current-status fields are consumed; calendar events are not
-assumed to represent the active order.
+Live diagnostics also confirm location metadata in the calendar envelope.
+Calendar events are not assumed to represent the active order.
 """
 
 from dataclasses import dataclass
@@ -63,7 +63,25 @@ def parse_status(payload: Any, state_code: str) -> MastStatus:
     status = payload.get("status")
     if not isinstance(status, dict) or type(status.get("isHalfMast")) is not bool:
         raise MastResponseError("Mast returned an invalid status")
-    if status.get("countryCode") != COUNTRY_CODE or status.get("stateCode") != state_code:
+    calendar = payload.get("calendar")
+    calendar = calendar if isinstance(calendar, dict) else {}
+    returned_state = status.get("stateCode")
+    # Live responses can omit status.stateCode while calendar confirms the
+    # requested location. This is envelope metadata, not an event inference.
+    # Do not let a matching calendar override an explicit conflicting status.
+    if (
+        status.get("countryCode") != COUNTRY_CODE
+        or returned_state not in (None, state_code)
+        or calendar.get("countryCode") not in (None, COUNTRY_CODE)
+        or calendar.get("stateCode") not in (None, state_code)
+        or (
+            returned_state is None
+            and (
+                calendar.get("countryCode") != COUNTRY_CODE
+                or calendar.get("stateCode") != state_code
+            )
+        )
+    ):
         raise MastLocationError("Mast did not confirm the requested location")
     half_staff = status["isHalfMast"]
     cache = payload.get("cache")
