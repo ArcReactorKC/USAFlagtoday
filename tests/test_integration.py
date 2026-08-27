@@ -101,3 +101,16 @@ async def test_options_reload_preserves_identity(hass, entry):
     assert device.name == "Mast Flag Status - Kansas"
     assert entry.runtime_data.state_code == "KS"
     assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_auth_failure_starts_reauth(hass, entry):
+    with patch(CLIENT, return_value=parse_status(payload(), "MO")):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+    with patch(CLIENT, side_effect=MastAuthError):
+        await entry.runtime_data.async_refresh()
+        await hass.async_block_till_done()
+    flows = hass.config_entries.flow.async_progress()
+    assert any(flow["context"].get("source") == "reauth" for flow in flows)
+    assert not entry.runtime_data.last_update_success
+    assert await hass.config_entries.async_unload(entry.entry_id)

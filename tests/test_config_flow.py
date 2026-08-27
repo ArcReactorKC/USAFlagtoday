@@ -115,3 +115,40 @@ async def test_options_failure_preserves_entry(hass, entry):
     assert result["errors"] == {"base": "invalid_location"}
     assert entry.options == {}
     assert entry.unique_id == "US_MO"
+
+
+async def test_reauth_rejects_invalid_key(hass, entry):
+    result = await hass.config_entries.flow.async_init(
+        "mast_flag",
+        context={"source": SOURCE_REAUTH, "entry_id": entry.entry_id},
+        data=entry.data,
+    )
+    with patch(CLIENT, side_effect=MastAuthError):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {"api_key": "invalid-replacement"},
+        )
+    assert result["errors"] == {"base": "invalid_auth"}
+    assert entry.data["api_key"] == "test-key"
+
+
+async def test_options_duplicate(hass, entry):
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
+
+    other = MockConfigEntry(
+        domain="mast_flag",
+        unique_id="US_KS",
+        data={"api_key": "another-key", "country_code": "US", "state_code": "KS"},
+    )
+    other.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    data = payload()
+    data["status"]["stateCode"] = "KS"
+    with patch(CLIENT, return_value=parse_status(data, "KS")):
+        result = await hass.config_entries.options.async_configure(
+            result["flow_id"],
+            {"state_code": "KS"},
+        )
+    assert result["errors"] == {"base": "already_configured"}
+    assert entry.unique_id == "US_MO"
+    assert entry.options == {}
