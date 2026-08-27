@@ -1,4 +1,5 @@
 {
   "name": "Mast Flag Status",
-  "homeassistant": "2025.12.0"
+  "homeassistant": "2025.12.0",
+  "country": "US"
 }

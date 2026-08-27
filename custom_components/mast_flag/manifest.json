@@ -1,12 +1,14 @@
 {
   "domain": "mast_flag",
   "name": "Mast Flag Status",
-  "codeowners": ["@ArcReactorKC"],
+  "codeowners": [
+    "@ArcReactorKC"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/ArcReactorKC/USAFlagtoday",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/ArcReactorKC/USAFlagtoday/issues",
   "requirements": [],
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
