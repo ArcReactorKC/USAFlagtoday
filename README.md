@@ -119,13 +119,20 @@ actions:
 
 ## Polling
 
-One shared coordinator sends one request per location every hour while its
+One shared coordinator sends one request per location every four hours while its
 entities are enabled. Setup, location validation, reauthentication, reloads,
 and manual refreshes make additional requests. Three entities do not triple
 polling. The interval is defined in `const.py` as `UPDATE_INTERVAL`.
 
+For one location, scheduled polling uses about 186 requests in a 31-day month.
+Mast's [free Hobbyist plan](https://www.mast.today/checkout) allows 250 requests
+per month (checked 2026-08-27), leaving some room for additional requests.
+Multiple locations and other applications using the same account share that
+allowance; two locations already exceed it. This interval is not a quota cap.
+Check your developer portal for current limits and usage.
+
 Mast's upstream refresh schedule is independent of this polling interval.
-Status changes can take up to an hour to appear after Mast updates. This is
+Status changes can take up to four hours to appear after Mast updates. This is
 not a real-time timer for sunrise, sunset, or noon; the API decides the status.
 Rate limits and temporary failures use Home Assistant's normal retry and
 availability behavior. The integration does not run its own retry loop.
@@ -183,7 +190,7 @@ supported.
 ### Default HACS catalog submission
 
 Before submitting, verify installation and setup with a real Mast key, all three
-entities, an hourly refresh, state changes, and behavior after a Home Assistant
+entities, a scheduled refresh, state changes, and behavior after a Home Assistant
 restart. Never include credentials in screenshots or reports.
 
 After all checks pass without ignores and a full release is published, the owner

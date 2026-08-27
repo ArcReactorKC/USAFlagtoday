@@ -1,5 +1,6 @@
 """Setup, shared polling, availability, identity, and unload tests."""
 
+from datetime import timedelta
 from unittest.mock import patch
 
 import pytest
@@ -9,7 +10,6 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from custom_components.mast_flag.api import MastAuthError, MastConnectionError, parse_status
-from custom_components.mast_flag.const import UPDATE_INTERVAL
 from custom_components.mast_flag.coordinator import MastCoordinator
 from tests.test_api import payload
 
@@ -35,7 +35,7 @@ async def test_setup_and_unload(hass, entry, half):
     assert states["flag_status_reason"].state == "Example observance"
     assert states["flag_status"].attributes["state_code"] == "MO"
     assert len({entity.device_id for entity in entities}) == 1
-    assert entry.runtime_data.update_interval == UPDATE_INTERVAL
+    assert entry.runtime_data.update_interval == timedelta(hours=4)
     assert await hass.config_entries.async_unload(entry.entry_id)
     await hass.async_block_till_done()
 

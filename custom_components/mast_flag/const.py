@@ -9,7 +9,7 @@ API_KEY_HEADER = "x-mast-license-key"
 COUNTRY_CODE = "US"
 CONF_COUNTRY = "country_code"
 CONF_STATE = "state_code"
-UPDATE_INTERVAL = timedelta(hours=1)
+UPDATE_INTERVAL = timedelta(hours=4)
 REQUEST_TIMEOUT = 30
 
 STATES = {
