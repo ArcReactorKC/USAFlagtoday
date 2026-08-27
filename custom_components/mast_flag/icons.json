@@ -1,0 +1,9 @@
+{
+  "entity": {
+    "binary_sensor": {"flag_half_staff": {"default": "mdi:flag"}},
+    "sensor": {
+      "flag_status": {"default": "mdi:flag"},
+      "flag_status_reason": {"default": "mdi:text-box-outline"}
+    }
+  }
+}

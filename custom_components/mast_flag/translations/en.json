@@ -1,0 +1,50 @@
+{
+  "title": "Mast Flag Status",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mast Flag Status",
+        "description": "Enter your Mast developer API key and select the location to monitor.",
+        "data": {"api_key": "API key", "country_code": "Country", "state_code": "U.S. state"}
+      },
+      "reauth_confirm": {
+        "title": "Replace Mast API key",
+        "description": "Mast rejected your API key. Enter a valid key to resume updates.",
+        "data": {"api_key": "API key"}
+      }
+    },
+    "error": {
+      "invalid_auth": "Mast rejected the API key. Check your developer account.",
+      "cannot_connect": "Cannot reach Mast, or its request allowance has been exceeded. Try again later.",
+      "invalid_location": "Mast could not confirm this U.S. location. Select a supported state.",
+      "invalid_response": "Mast returned an unexpected response. Try again later or report the issue."
+    },
+    "abort": {
+      "already_configured": "This state is already configured.",
+      "reauth_successful": "API key updated successfully."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Change monitored state",
+        "description": "The new location is validated before saving. Existing entity IDs are retained.",
+        "data": {"state_code": "U.S. state"}
+      }
+    },
+    "error": {
+      "invalid_auth": "Mast rejected the API key. Reauthenticate the integration before changing state.",
+      "cannot_connect": "Cannot reach Mast, or its request allowance has been exceeded. Try again later.",
+      "invalid_location": "Mast could not confirm this U.S. location. Select a supported state.",
+      "invalid_response": "Mast returned an unexpected response. Try again later or report the issue.",
+      "already_configured": "This state is already configured."
+    }
+  },
+  "entity": {
+    "binary_sensor": {"flag_half_staff": {"name": "Flag half staff"}},
+    "sensor": {
+      "flag_status": {"name": "Flag status", "state": {"full_staff": "Full staff", "half_staff": "Half-staff"}},
+      "flag_status_reason": {"name": "Flag status reason"}
+    }
+  }
+}
