@@ -13,7 +13,7 @@ important decisions against official notices.
 
 ## Requirements
 
-- Home Assistant 2025.12 or later.
+- Home Assistant 2026.8.3 or later.
 - A [Mast developer API key](https://www.mast.today/api) (use **Get an API key**).
 - Internet access to `www.mast.today` over HTTPS.
 
@@ -176,9 +176,9 @@ All HACS checks, including brand assets, are enabled. Before publishing, run
 HACS, Hassfest, and the tests successfully, then publish a release containing the
 validated changes. Keep the release tag and `manifest.json` version aligned.
 
-The declared runtime minimum is Home Assistant 2025.12; automated integration
-tests currently cover 2026.8.3. Bundled brand icons are supported starting with
-Home Assistant 2026.3; earlier versions may show a placeholder icon.
+The minimum supported Home Assistant version is 2026.8.3, matching the version
+covered by automated integration tests. Older Home Assistant versions are not
+supported.
 
 ### Default HACS catalog submission
 
