@@ -90,7 +90,10 @@ The current-status example documents `status.isHalfMast`, `status.title`,
 The normalized model reserves `start`, `end`, and `source_url`, but these remain
 unset because the public documentation does not specify their keys on this
 endpoint. Calendar events are **not** assumed to describe the active order.
-No additional calendar or source requests are made.
+No additional calendar or source requests are made. Live responses may omit
+`status.stateCode`; in that case the same response's `calendar.countryCode` and
+`calendar.stateCode` must confirm the requested location. Explicit conflicting
+location codes are rejected. Calendar events are never used to determine status.
 
 An explicitly stale Mast cache is exposed as `cache_is_stale: true`; it is not a
 claim that data is freshly verified. Missing cache metadata means freshness is
@@ -135,8 +138,9 @@ availability behavior. The integration does not run its own retry loop.
   when prompted. HTTP 401/403 are treated as authentication failures.
 - **Cannot connect:** check DNS, HTTPS access, Mast availability, and your request
   allowance. HTTP 429 and server errors are temporary failures.
-- **Invalid location:** Mast must echo `US` and the selected postal abbreviation.
-  HTTP 400/422 also produces this error. A national fallback is not silently accepted.
+- **Invalid location:** Mast must confirm `US` and the selected postal abbreviation
+  in status metadata, or in calendar metadata when `status.stateCode` is missing.
+  HTTP 400/422 and conflicting location codes also produce this error.
 - **Unexpected response:** Mast may have changed its schema or returned non-JSON.
   Report the problem with sanitized details, never your API key or raw headers.
 - **Unavailable:** Home Assistant retries temporary failures. Previously cached
