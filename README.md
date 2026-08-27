@@ -36,8 +36,6 @@ Alternatively, add the repository manually:
 4. Follow Setup below.
 
 This is a custom repository, not a claim of inclusion in the default HACS catalog.
-Code must be merged into the default branch (or published as a release) before
-these installation steps can download it.
 
 ### Manual
 
@@ -174,12 +172,25 @@ pytest -q
 
 Tests mock API responses and need no Mast credentials. The test dependency pins
 Home Assistant 2026.8.3. HACS and Hassfest validation workflows are included.
-The `brands` HACS check is explicitly deferred until upstream brand assets are
-accepted; all other checks remain enabled. Before publishing, add a repository
-description and topics (for example `home-assistant`, `hacs`, `mast`, `flag-status`),
-enable issues, run CI, and merge to the default branch. Keep releases and
-`manifest.json` versions aligned. Do not claim default-catalog inclusion without
-completing its separate requirements.
+All HACS checks, including brand assets, are enabled. Before publishing, run
+HACS, Hassfest, and the tests successfully, then publish a release containing the
+validated changes. Keep the release tag and `manifest.json` version aligned.
+
+The declared runtime minimum is Home Assistant 2025.12; automated integration
+tests currently cover 2026.8.3. Bundled brand icons are supported starting with
+Home Assistant 2026.3; earlier versions may show a placeholder icon.
+
+### Default HACS catalog submission
+
+Before submitting, verify installation and setup with a real Mast key, all three
+entities, an hourly refresh, state changes, and behavior after a Home Assistant
+restart. Never include credentials in screenshots or reports.
+
+After all checks pass without ignores and a full release is published, the owner
+or a major contributor can submit a PR to `hacs/default`, adding
+`ArcReactorKC/USAFlagtoday` alphabetically to its `integration` list. Follow the
+current submission template and allow maintainer edits. Catalog acceptance is a
+separate review; the HACS button does not mean this repository is already listed.
 
 ### Specifications checked
 
@@ -193,4 +204,9 @@ completing its separate requirements.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Integration code: MIT. See [LICENSE](LICENSE).
+
+The bundled Mast icon is third-party artwork from [Mast](https://www.mast.today),
+used to identify the API service. It is not covered by this project's MIT license.
+See [brand attribution](custom_components/mast_flag/brand/README.md) for its source.
+Its use does not imply affiliation with or endorsement by Mast.
