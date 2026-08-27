@@ -21,6 +21,15 @@ important decisions against official notices.
 
 ### HACS custom repository
 
+[![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ArcReactorKC&repository=USAFlagtoday&category=integration)
+
+With HACS already installed, use the button to open this repository in your
+Home Assistant instance. My Home Assistant may ask for your instance URL.
+Follow the prompts in HACS to add/download the integration, then restart Home
+Assistant and follow Setup below. The button does not install HACS itself.
+
+Alternatively, add the repository manually:
+
 1. Open HACS, then its menu → **Custom repositories**.
 2. Add `https://github.com/ArcReactorKC/USAFlagtoday` with type **Integration**.
 3. Download **Mast Flag Status** and restart Home Assistant.
